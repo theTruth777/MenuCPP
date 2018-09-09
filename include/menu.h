@@ -18,13 +18,7 @@ class EngineMenu {
         }
 
         void initSplashScreen(const char *displayName, const char *fontFamily, const char *backgroundImg = NULL){
-           prepareSplashScreen(displayName, fontFamily);
-
-            if(backgroundImg != NULL){
-
-                prepareSplashScreenBackgroundImage(backgroundImg);
-
-            }
+           prepareSplashScreen(displayName, fontFamily, backgroundImg);
            
         }
 
@@ -51,12 +45,25 @@ class EngineMenu {
         int splashScreenTextBlink;
 
 
-        void prepareSplashScreen(const char *displayName, const char *fontFamily){
+        SDL_Renderer *splashImageRenderer;
+        SDL_Texture *splashImageTexture;
+
+
+        void prepareSplashScreen(const char *displayName, const char *fontFamily, const char *backgroundImg){
             font = TTF_OpenFont(fontFamily, 25);
             splashText = displayName;
+
+            if(backgroundImg != NULL){
+                
+                splashImageRenderer = SDL_CreateRenderer(windowScreen, -1, 0);
+                SDL_Surface *image = SDL_LoadBMP("image.bmp");
+                splashImageTexture = SDL_CreateTextureFromSurface(splashFontRenderer, image);
+
+            }
         }
 
-        void renderSplashScreen(){
+
+        void renderSplashScreenText(){
             int textWidth = 0;
             int textHeight = 0;
 
@@ -89,6 +96,11 @@ class EngineMenu {
                 splashFontSurface = NULL;
 
             }
+        }
+
+        void renderSplashScreen(){
+
+            renderSplashScreenText();
 
         }
 
@@ -99,12 +111,6 @@ class EngineMenu {
 
         }
 
-        void prepareSplashScreenBackgroundImage(const char *filename){
-            return;
-            SDL_Renderer *splashImageRenderer = SDL_CreateRenderer(windowScreen, -1, 0);
-            SDL_Surface *image = SDL_LoadBMP("image.bmp");
-            SDL_Texture *texture = SDL_CreateTextureFromSurface(splashFontRenderer, image);
-        }
 };
 
 #endif
