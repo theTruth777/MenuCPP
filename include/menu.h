@@ -30,34 +30,30 @@ class EngineMenu {
 
     private:
         SDL_Renderer *renderer;
-        
         SDL_Texture *fontTextureWhite;
-        SDL_Texture *fontTextureBlack;
-
         SDL_Surface *fontSurfaceWhite;
-        SDL_Surface *fontSurfaceBlack;
+
+        TTF_Font *font;
+        const char *splashText;
 
         int windowHeight;
         int windowWidth;
 
         int splashScreenTextBlink;
 
+
         void prepareSplashScreen(const char *displayName, const char *fontFamily){
-            TTF_Font * font = TTF_OpenFont(fontFamily, 25);
-
-            SDL_Color color = {255, 255, 255};
-            fontSurfaceWhite = TTF_RenderText_Solid(font, displayName, color);
-            fontTextureWhite = SDL_CreateTextureFromSurface(renderer, fontSurfaceWhite);
-
-            color = {0, 0, 0};
-            fontSurfaceWhite = TTF_RenderText_Solid(font, displayName, color);
-            fontTextureBlack = SDL_CreateTextureFromSurface(renderer, fontSurfaceBlack);
+            font = TTF_OpenFont(fontFamily, 25);
+            splashText = displayName;
         }
 
         void renderSplashScreen(){
             int textWidth = 0;
             int textHeight = 0;
 
+            SDL_Color color = {255, 255, 255};
+            fontSurfaceWhite = TTF_RenderText_Solid(font, splashText, color);
+            fontTextureWhite = SDL_CreateTextureFromSurface(renderer, fontSurfaceWhite);
 
             splashScreenTextBlink++;
             if(splashScreenTextBlink == 100){
@@ -66,38 +62,32 @@ class EngineMenu {
                 
             }
 
+            //Handle splash screen text blinkg effect
             if(splashScreenTextBlink < 50){
 
                 SDL_QueryTexture(fontTextureWhite, NULL, NULL, &textWidth, &textHeight);
 
                 const int devideScreenWidth = windowWidth / 2;
                 const int deviceText = textWidth / 2;
-
                 const int dediceScreenHeight = windowHeight / 2;
 
                 SDL_Rect fontStruct = {devideScreenWidth - deviceText, dediceScreenHeight, textWidth, textHeight };                
                 SDL_RenderCopy(renderer, fontTextureWhite, NULL, &fontStruct);
 
             }else{
-
-                SDL_QueryTexture(fontTextureBlack, NULL, NULL, &textWidth, &textHeight);
-
-                const int devideScreenWidth = windowWidth / 2;
-                const int deviceText = textWidth / 2;
-
-                const int dediceScreenHeight = windowHeight / 2;
-
-                SDL_Rect fontStruct = {devideScreenWidth - deviceText, dediceScreenHeight, textWidth, textHeight };                
-                SDL_RenderCopy(renderer, fontTextureBlack, NULL, &fontStruct);
+                
+                fontTextureWhite = NULL;
+                fontSurfaceWhite = NULL;
 
             }
 
         }
 
         void destroySplashScreen(){
+
             SDL_DestroyTexture(fontTextureWhite);
             SDL_FreeSurface(fontSurfaceWhite);
-            SDL_FreeSurface(fontSurfaceBlack);
+
         }
 };
 
