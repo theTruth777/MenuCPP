@@ -9,15 +9,23 @@ using namespace std;
 class EngineMenu {
     public:
 
-        EngineMenu(SDL_Renderer *windowRenderer, SDL_Window *window){
+        EngineMenu(SDL_Renderer *windowsplashFontRenderer, SDL_Window *window){
             TTF_Init();
-            renderer = windowRenderer;
+            splashFontRenderer = windowsplashFontRenderer;
+            windowScreen = window;
             splashScreenTextBlink = 0;
             SDL_GetWindowSize(window, &windowWidth, &windowHeight);
         }
 
-        void initSplashScreen(const char *displayName, const char *fontFamily){
+        void initSplashScreen(const char *displayName, const char *fontFamily, const char *backgroundImg = NULL){
            prepareSplashScreen(displayName, fontFamily);
+
+            if(backgroundImg != NULL){
+
+                prepareSplashScreenBackgroundImage(backgroundImg);
+
+            }
+           
         }
 
         void displaySplashScreen(){
@@ -29,9 +37,10 @@ class EngineMenu {
         }
 
     private:
-        SDL_Renderer *renderer;
-        SDL_Texture *fontTextureWhite;
-        SDL_Surface *fontSurfaceWhite;
+        SDL_Window *windowScreen;
+        SDL_Renderer *splashFontRenderer;
+        SDL_Texture *splashFontTexture;
+        SDL_Surface *splashFontSurface;
 
         TTF_Font *font;
         const char *splashText;
@@ -52,8 +61,8 @@ class EngineMenu {
             int textHeight = 0;
 
             SDL_Color color = {255, 255, 255};
-            fontSurfaceWhite = TTF_RenderText_Solid(font, splashText, color);
-            fontTextureWhite = SDL_CreateTextureFromSurface(renderer, fontSurfaceWhite);
+            splashFontSurface = TTF_RenderText_Solid(font, splashText, color);
+            splashFontTexture = SDL_CreateTextureFromSurface(splashFontRenderer, splashFontSurface);
 
             splashScreenTextBlink++;
             if(splashScreenTextBlink == 100){
@@ -65,19 +74,19 @@ class EngineMenu {
             //Handle splash screen text blinkg effect
             if(splashScreenTextBlink < 50){
 
-                SDL_QueryTexture(fontTextureWhite, NULL, NULL, &textWidth, &textHeight);
+                SDL_QueryTexture(splashFontTexture, NULL, NULL, &textWidth, &textHeight);
 
                 const int devideScreenWidth = windowWidth / 2;
                 const int deviceText = textWidth / 2;
                 const int dediceScreenHeight = windowHeight / 2;
 
                 SDL_Rect fontStruct = {devideScreenWidth - deviceText, dediceScreenHeight, textWidth, textHeight };                
-                SDL_RenderCopy(renderer, fontTextureWhite, NULL, &fontStruct);
+                SDL_RenderCopy(splashFontRenderer, splashFontTexture, NULL, &fontStruct);
 
             }else{
-                
-                fontTextureWhite = NULL;
-                fontSurfaceWhite = NULL;
+
+                splashFontTexture = NULL;
+                splashFontSurface = NULL;
 
             }
 
@@ -85,9 +94,16 @@ class EngineMenu {
 
         void destroySplashScreen(){
 
-            SDL_DestroyTexture(fontTextureWhite);
-            SDL_FreeSurface(fontSurfaceWhite);
+            SDL_DestroyTexture(splashFontTexture);
+            SDL_FreeSurface(splashFontSurface);
 
+        }
+
+        void prepareSplashScreenBackgroundImage(const char *filename){
+            return;
+            SDL_Renderer *splashImageRenderer = SDL_CreateRenderer(windowScreen, -1, 0);
+            SDL_Surface *image = SDL_LoadBMP("image.bmp");
+            SDL_Texture *texture = SDL_CreateTextureFromSurface(splashFontRenderer, image);
         }
 };
 
