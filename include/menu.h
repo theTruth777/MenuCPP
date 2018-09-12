@@ -32,21 +32,14 @@ class EngineMenu {
 
     private:
         SDL_Window *windowScreen;
-        SDL_Renderer *splashFontRenderer;
-        SDL_Texture *splashFontTexture;
+        SDL_Renderer *splashFontRenderer, *splashImageRenderer;
+        SDL_Texture *splashFontTexture, *splashImageTexture;
         SDL_Surface *splashFontSurface;
-
+        
         TTF_Font *font;
         const char *splashText;
 
-        int windowHeight;
-        int windowWidth;
-
-        int splashScreenTextBlink;
-
-
-        SDL_Renderer *splashImageRenderer;
-        SDL_Texture *splashImageTexture;
+        int windowHeight, windowWidth, splashScreenTextBlink;
 
 
         void prepareSplashScreen(const char *displayName, const char *fontFamily, const char *backgroundImg){
